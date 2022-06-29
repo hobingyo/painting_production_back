@@ -56,19 +56,16 @@ class ArticleView(APIView): # CBV 방식
         article.save()
 
         # style transfer 부분
-
+        # 실험파일
         output = request.FILES['image']
+
+        # 머신러닝 파트
+        # output = os.system(f'style_transfer article/media/{image} article/media/boo.png -o output_{image}')
 
         empty_output = ArticleModel.objects.latest('id')
 
+        # 아웃풋 삽입
         empty_output.output = output
-        # empty_output = ArticleModel(
-        #     author = user,
-        #     title = title,
-        #     contents = contents,
-        #     image = request.FILES['image'],
-        #     output = output,
-        # 
 
         empty_output.save()
         
