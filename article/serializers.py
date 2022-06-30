@@ -9,13 +9,57 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_comments_article(self,obj):
         return obj.article.id
+
+
+
+    # custom validation
+    def validate(self, request, data):
+        
+        if self.context['request'].method == 'PUT' or 'DELETE':
+            request.user
+            return data
+
+
+
+
+    # custum update
+    def update(self, instance, validated_data):
+
+        # instance에는 입력된 object가 담긴다.
+        print(validated_data)
+        for key, value in validated_data.items():
+            if key == "user":
+                instance.user(value)
+                continue
+
+            setattr(instance, key, value)
+        instance.save()
+        return instance
+
+    
     class Meta :
         model = CommentModel
-        fields = ['contents', 'comments_article']
+        fields = ['id', 'article', 'user', 'contents', 'comments_article']
 
 
 class ArticleSerializer(serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True)
+
+
+    # custum update
+    def update(self, instance, validated_data):
+
+        # instance에는 입력된 object가 담긴다.
+        print(validated_data)
+        for key, value in validated_data.items():
+            if key == "author":
+                instance.set_author(value)
+                continue
+
+            setattr(instance, key, value)
+        instance.save()
+        return instance
+
     class Meta:
         model = ArticleModel
         fields = ['author','title','image','contents','output','comment_set']

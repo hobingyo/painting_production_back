@@ -22,10 +22,18 @@ from django.views.static import serve
 from django.conf.urls.static import static
 from django.conf import settings
 
+
+
+
 urlpatterns = [
     #article/
     path('', views.ArticleView.as_view()),
     path('article/', views.ArticleView.as_view()),
+    path('comment/<comment_id>/', views.CommentView.as_view()),
+    path('comment/<article_id>/', views.CommentView.as_view()),
+    path('<obj_id>/update/', views.ArticleView.as_view()),
+    path('<obj_id>/delete/', views.ArticleView.as_view()),
     path('allarticle/', views.AllArticleView.as_view()),
     path('<obj_id>/', views.ArticleDetailView.as_view()),
+    
 ]
