@@ -27,5 +27,5 @@ urlpatterns = [
     path('', views.ArticleView.as_view()),
     path('article/', views.ArticleView.as_view()),
     path('allarticle/', views.AllArticleView.as_view()),
-    path('<obj_id>', views.ArticleView.as_view()),
+    path('<obj_id>/', views.ArticleDetailView.as_view()),
 ]

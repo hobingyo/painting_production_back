@@ -80,11 +80,22 @@ class AllArticleView(APIView):
         articles = ArticleModel.objects.filter(
                 exposure_start_date__lte = today
             ).order_by("-id")
-        print(articles)
+        
         articles = ArticleModel.objects.all()
         for article in articles:
-            print(article)
+            
             return Response(ArticleImageSerializer(article).data) 
+
+
+# article detail
+class ArticleDetailView(APIView):
+    permisiion_classes = [IsAuthenticated]
+
+    def get(self, request, obj_id):
+        
+        article_detail = ArticleModel.objects.get(id=obj_id)
+        return Response(ArticleSerializer(article_detail).data)
+
 
 
 
