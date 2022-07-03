@@ -9,21 +9,21 @@ from ppb.permissions import IsAdminOrIsAuthenticatedReadOnly
 from rest_framework.permissions import IsAuthenticated
 from article.serializers import ArticleSerializer, ArticleImageSerializer, CommentSerializer
 import os
+from rest_framework import permissions
 # Create your views here.
 
 
 # url = 'article/'
 class ArticleView(APIView): # CBV 방식
     # 로그인 한 사용자의 게시글 목록 return
-    permission_classes = [IsAdminOrIsAuthenticatedReadOnly]
+    # permission_classes = [IsAdminOrIsAuthenticatedReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         user = request.user
         today = timezone.now()
 
-        articles = ArticleModel.objects.filter(
-            exposure_start_date__lte = today
-        ).order_by("-id")
+        articles = ArticleModel.objects.filter().order_by("-id")
         
         titles = []
 
@@ -33,10 +33,15 @@ class ArticleView(APIView): # CBV 방식
         return Response ({"article_list": titles})
 
     def post(self, request):
+
+
         user = request.user
         title = request.data.get('title','')
         contents = request.data.get('contents','')
-        image = request.FILES['image'].name
+        image = request.FILES['image']
+
+        
+
         # exposure_start_date = request.data.get('exposure_start_date')
         # exposure_end_date = request.data.get('exposure_start_date')
 
@@ -44,14 +49,15 @@ class ArticleView(APIView): # CBV 방식
             return Response({"error":"title이 1자 이하라면 게시글을 작성할 수 없습니다."})
         if len(contents) <= 10 :
             return Response({"error":"contents가 10자 이하라면 게시글을 작성할 수 없습니다."}) 
-            
-
+        
+        
 
         article = ArticleModel(
             author = user,
             title = title,
             contents = contents,
-            image = request.FILES['image'],
+            image = image,
+            
             # exposure_start_date = exposure_start_date,
             # exposure_end_date = exposure_end_date
         )
@@ -60,17 +66,18 @@ class ArticleView(APIView): # CBV 방식
 
         # style transfer 부분
         # 실험파일
-        output = request.FILES['image']
+        # output = request.FILES
+        # output.save()
 
         # 머신러닝 파트
         # output = os.system(f'style_transfer article/media/{image} article/media/boo.png -o output_{image}')
 
-        empty_output = ArticleModel.objects.latest('id')
+        ##empty_output = ArticleModel.objects.latest('id')
 
         # 아웃풋 삽입
-        empty_output.output = output
+        ##empty_output.output = output
 
-        empty_output.save()
+        ##empty_output.save()
         
         return Response({"message":"작성 완료!"})
 
@@ -99,21 +106,32 @@ class ArticleView(APIView): # CBV 방식
         return Response({'message': f'{user}님의 {title}게시글이 삭제되었습니다.'})
 
 
-# url = 'article/allarticle/' 모든 아티클 리스팅
+# url = 'article/all/' 모든 아티클 리스팅
 class AllArticleView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
+
+
+    # titles = []
+
+    # for article in articles:
+    #     titles.append(article.title)
+
+    # return Response ({"article_list": titles})
+
 
     def get(self, request):
-        today = timezone.now()
+        # today = timezone.now()
 
-        articles = ArticleModel.objects.filter(
-                exposure_start_date__lte = today
-            ).order_by("-id")
+        # articles = ArticleModel.objects.filter(
+        #         exposure_start_date__lte = today
+        #     ).order_by("-id")
         
-        articles = ArticleModel.objects.all()
-        for article in articles:
-            
-            return Response(ArticleImageSerializer(article).data) 
+        articles = list(ArticleModel.objects.all().order_by("-id"))
+        
+        # for article in articles:
+        result = ArticleSerializer(articles, many=True).data
+        return Response(result) 
 
 
 # url = 'article/<obj_id>/ article detail 페이지
