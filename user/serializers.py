@@ -56,15 +56,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 
-class UserSerializer(serializers.ModelSerializer):
-  article_set = ArticleSerializer(many=True)
-  #articles = ArticleSerializer(many=True, source="article_set")
-  # comment_set = CommentSerializer(many=True)
-  userprofile = UserProfileSerializer()
-    
+
+class UserListingSerializer(serializers.ModelSerializer):
   class Meta:
-      model = UserModel
-      fields = ["username","article_set","userprofile",]
+    model = UserModel
+    fields = ["username"]
+
 
 
 

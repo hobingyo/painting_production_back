@@ -8,6 +8,7 @@ class Article(models.Model):
     author = models.ForeignKey('user.User', verbose_name="작성자", on_delete=models.CASCADE)
     title = models.CharField('제목', max_length=50)
     image = models.ImageField('이미지', upload_to="article/media/")
+    image_converted = models.FileField(upload_to='article/converted/', null=True)
     contents = models.TextField('내용', max_length=500)
     output = models.ImageField('결과물', upload_to="article/media/", default='')
     exposure_start_date = models.DateField('게시 일자',default=timezone.now())

@@ -28,6 +28,7 @@ from django.conf import settings
 urlpatterns = [
     #article/
     path('', views.ArticleView.as_view()),
+    path('saveImage/', views.ImageView.as_view()),
     path('article/', views.ArticleView.as_view()),
     path('all/', views.AllArticleView.as_view()),
     path('comment/<comment_id>/', views.CommentView.as_view()),

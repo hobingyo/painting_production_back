@@ -7,9 +7,17 @@ from article.models import Comment as CommentModel
 from django.utils import timezone
 from ppb.permissions import IsAdminOrIsAuthenticatedReadOnly
 from rest_framework.permissions import IsAuthenticated
-from article.serializers import ArticleSerializer, ArticleImageSerializer, CommentSerializer
+from article.serializers import ArticleSerializer, ArticleImageSerializer, CommentSerializer, ArticlePostSerializer
 import os
+import json
 from rest_framework import permissions
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
+
+from PIL import Image
+import io
+from django.core.files.base import ContentFile
 
 
 
@@ -18,6 +26,12 @@ from rest_framework import permissions
 
 
 # url = 'article/'
+
+
+
+
+
+
 class ArticleView(APIView): # CBV 방식
     # 로그인 한 사용자의 게시글 목록 return
     # permission_classes = [IsAdminOrIsAuthenticatedReadOnly]
@@ -124,6 +138,13 @@ class AllArticleView(APIView):
         result = ArticleSerializer(articles, many=True).data
         return Response(result) 
 
+    # 적용 필터 가져오기
+    def post(self, request):
+        img = request.data
+        # sample = f"article/media/{img}.png"
+
+        return Response(f"{sample}")
+
 
 # url = 'article/<obj_id>/ article detail 페이지
 class ArticleDetailView(APIView):
@@ -225,11 +246,75 @@ class CommentUserView(APIView):
 
 
 
+class ImageView(APIView):
+    
+    def post(self,request):
+
+        return Response("")
+    
+
+
+    # def post(self, request):
+        
+    #     empty = ArticleModel.objects.latest('id')
+    #     image = request.data
+    #     print(dir(image))
+    #     image = image.values()
+    #     image = json.load(image)
+    #     image = Image.open(image)
+    #     image.thumbnail((220, 130), Image.ANTIALIAS)
+    #     thumb_io = io.BytesIO()
+    #     image.save(thumb_io, image.format, quality=60)
+    #     empty.image.save(image.filename, ContentFile(thumb_io.getvalue()), save=False)
+    #     empty.save()
+
+
+            # image = request.data
+            # print(image)
+            # print(list(image.values()))
+            # empty = ArticleModel.objects.latest('id')
+            # empty.image_converted = image
+            # empty.save()
 
 
 
 
 
+
+
+
+
+        # style transfer 부분
+        # 실험파일
+        # output = request.FILES
+        # output.save()
+
+        # 머신러닝 파트
+        # output = os.system(f'style_transfer article/media/{image} article/media/boo.png -o output_{image}')
+
+        ##empty_output = ArticleModel.objects.latest('id')
+
+        # 아웃풋 삽입
+        ##empty_output.output = output
+
+        ##empty_output.save()
+
+
+
+
+
+
+        # print(image)
+        # serializer = ArticlePostSerializer(data=request.data)
+
+        # if serializer.is_valid():
+        #    serializer.save() 
+        #    return Response({"message": "글 작성 완료!!"}) 
+        # else: 
+        #     print(serializer.errors)
+        #     return Response({"message": f'${serializer.errors}'}, 400)
+
+        
 
 
 

@@ -4,7 +4,7 @@ from rest_framework import permissions, status
 
 
 from django.contrib.auth import login, logout, authenticate
-from user.serializers import UserSerializer, UserProfileSerializer
+from user.serializers import UserSerializer, UserProfileSerializer, UserListingSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from user.jwt_claim_serializer import SpartaTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -15,9 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import F
 
 from user.models import UserProfile, User
-from user.serializers import UserSerializer
 
-from argon2 import PasswordHasher
 
 class UserView(APIView):  # CBV 방식
     permission_classes = [permissions.AllowAny]  # 누구나 view 조회 가능
@@ -26,10 +24,18 @@ class UserView(APIView):  # CBV 방식
     # permission_classes = [permissions.IsAuthenticated] # 로그인 된 사용자만 view 조회 가능
 
 
-    # 유저 정보 보기
+    # # 유저 정보 보기
     # def get(self, request):
     #     user = request.user
     #     return Response(UserSerializer(user).data)
+
+    
+    def get(self, request):
+        user = list(User.objects.all())
+        return Response(UserListingSerializer(user, many=True).data)
+
+
+
 
     # 회원가입
     def post(self, request):

@@ -31,6 +31,7 @@ class User(AbstractBaseUser):
     username = models.CharField("사용자 계정", max_length=20, unique=True)
     email = models.EmailField("이메일 주소", max_length=100)
     password = models.CharField("비밀번호", max_length=128)
+    password2 = models.CharField("비밀번호2", max_length=128, default="")
     fullname = models.CharField("이름", max_length=20)
     join_date = models.DateTimeField("가입일", auto_now_add=True)
 
