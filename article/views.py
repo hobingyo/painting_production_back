@@ -10,6 +10,10 @@ from rest_framework.permissions import IsAuthenticated
 from article.serializers import ArticleSerializer, ArticleImageSerializer, CommentSerializer
 import os
 from rest_framework import permissions
+
+
+
+
 # Create your views here.
 
 
@@ -112,21 +116,8 @@ class AllArticleView(APIView):
     permission_classes = [permissions.AllowAny]
 
 
-    # titles = []
-
-    # for article in articles:
-    #     titles.append(article.title)
-
-    # return Response ({"article_list": titles})
-
-
     def get(self, request):
-        # today = timezone.now()
 
-        # articles = ArticleModel.objects.filter(
-        #         exposure_start_date__lte = today
-        #     ).order_by("-id")
-        
         articles = list(ArticleModel.objects.all().order_by("-id"))
         
         # for article in articles:
@@ -140,14 +131,31 @@ class ArticleDetailView(APIView):
 
     def get(self, request, obj_id):
         
+
+        
         article_detail = ArticleModel.objects.get(id=obj_id)
+        article_detail_username = article_detail.author.username
+        
         return Response(ArticleSerializer(article_detail).data)
 
+# 게시글 작성자 아이디로 불러오는 함수
+class ArticleUserView(APIView):
+    
+
+    def get(self, request, obj_id):
+        
+
+        
+        article_detail = ArticleModel.objects.get(id=obj_id)
+        article_detail_username = article_detail.author.username
+        
+        return Response(article_detail_username)
 
 
 
 class CommentView(APIView):
     # permission_classes = [IsAdminOrIsAuthenticatedReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request, article_id):
         return Response(CommentSerializer(article_id).data)
@@ -155,7 +163,9 @@ class CommentView(APIView):
     # 댓글 작성
     def post(self, request, article_id):
         
+        
         user = request.user
+        print(user)
         request.data['article'] = ArticleModel.objects.get(id=article_id)
         contents = request.data.get('contents','')
 
@@ -200,7 +210,18 @@ class CommentView(APIView):
     
 
 
+# 코멘트 작성자 아이디로 불러오는 함수
+class CommentUserView(APIView):
+    
 
+    def get(self, request, comment_id):
+        
+
+        
+        comment_detail = CommentModel.objects.get(id=comment_id)
+        comment_detail_user = comment_detail.user.username
+        
+        return Response(comment_detail_user)
 
 
 

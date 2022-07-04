@@ -31,9 +31,11 @@ urlpatterns = [
     path('article/', views.ArticleView.as_view()),
     path('all/', views.AllArticleView.as_view()),
     path('comment/<comment_id>/', views.CommentView.as_view()),
-    path('comment/<article_id>/', views.CommentView.as_view()),
+    path('comment/<comment_id>/username', views.CommentUserView.as_view()),
+    path('commenting/<article_id>/', views.CommentView.as_view()),
     path('<obj_id>/update/', views.ArticleView.as_view()),
     path('<obj_id>/delete/', views.ArticleView.as_view()),
     path('<obj_id>/', views.ArticleDetailView.as_view()),
+    path('<obj_id>/username/', views.ArticleUserView.as_view()),
     
 ]

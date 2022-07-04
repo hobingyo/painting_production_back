@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from article.models import Article as ArticleModel
 from article.models import Comment as CommentModel
+from user.models import User as User
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -9,6 +10,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_comments_article(self,obj):
         return obj.article.id
+
+    
 
 
 
@@ -62,7 +65,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ArticleModel
-        fields = ['author','title','image','contents','output','comment_set']
+        fields = ['id','author','title','image','contents','output','comment_set']
 
 class ArticleImageSerializer(serializers.ModelSerializer):
     class Meta:

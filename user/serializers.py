@@ -35,7 +35,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     return obj.author.username
   class Meta:
     model = ArticleModel
-    fields = ['author', 'title', 'image', 'contents', 'exposure_start_date','article_user']
+    fields = ['id','author', 'title', 'image', 'contents', 'exposure_start_date','article_user']
 
 
 
@@ -64,6 +64,8 @@ class UserSerializer(serializers.ModelSerializer):
     
   class Meta:
       model = UserModel
-      fields = ["username","article_set","userprofile"]
+      fields = ["username","article_set","userprofile",]
+
+
 
 
