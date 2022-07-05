@@ -52,7 +52,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ArticleModel
-        fields = ['id','author','title','image','contents','output','comment_set']
+        fields = ['id','author','title','image','contents','output','comment_set','exposure_start_date']
 
 class ArticleImageSerializer(serializers.ModelSerializer):
     class Meta:
