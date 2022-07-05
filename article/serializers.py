@@ -54,6 +54,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = ArticleModel
         fields = ['id','author','title','image','contents','output','exposure_start_date','comment_set']
 
+
 class ArticleImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArticleModel
