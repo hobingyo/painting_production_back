@@ -11,20 +11,6 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_comments_article(self,obj):
         return obj.article.id
 
-    
-
-
-
-    # custom validation
-    def validate(self, request, data):
-        
-        if self.context['request'].method == 'PUT' or 'DELETE':
-            request.user
-            return data
-
-
-
-
     # custum update
     def update(self, instance, validated_data):
         

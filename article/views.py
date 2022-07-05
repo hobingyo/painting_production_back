@@ -201,9 +201,9 @@ class CommentView(APIView):
 
     # 댓글 업데이트
     def put(self, request, comment_id):
-        
+        data = request.data
         comment = CommentModel.objects.get(id=comment_id)
-        comment_serializer = CommentSerializer(comment, data=request.data, partial=True, context={"request": request})
+        comment_serializer = CommentSerializer(comment, data, partial=True, context={"request": request})
 
         
         if comment_serializer.is_valid():
