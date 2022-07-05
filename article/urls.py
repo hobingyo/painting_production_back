@@ -29,6 +29,7 @@ urlpatterns = [
     #article/
     path('', views.ArticleView.as_view()),
     path('saveImage/', views.ImageView.as_view()),
+    path('userImage/', views.UserImageView.as_view()),
     path('article/', views.ArticleView.as_view()),
     path('all/', views.AllArticleView.as_view()),
     path('comment/<comment_id>/', views.CommentView.as_view()),
@@ -38,5 +39,4 @@ urlpatterns = [
     path('<obj_id>/delete/', views.ArticleView.as_view()),
     path('<obj_id>/', views.ArticleDetailView.as_view()),
     path('<obj_id>/username/', views.ArticleUserView.as_view()),
-    
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

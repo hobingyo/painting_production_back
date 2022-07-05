@@ -9,11 +9,16 @@ from ppb.permissions import IsAdminOrIsAuthenticatedReadOnly
 from rest_framework.permissions import IsAuthenticated
 from article.serializers import ArticleSerializer, ArticleImageSerializer, CommentSerializer, ArticlePostSerializer
 import os
+import shutil
 import json
 from rest_framework import permissions
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from user.jwt_claim_serializer import SpartaTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from PIL import Image
 import io
@@ -58,45 +63,34 @@ class ArticleView(APIView): # CBV 방식
         contents = request.data.get('contents','')
         image = request.FILES['image']
 
-        
-
-        # exposure_start_date = request.data.get('exposure_start_date')
-        # exposure_end_date = request.data.get('exposure_start_date')
-
         if len(title) <= 1 :
             return Response({"error":"title이 1자 이하라면 게시글을 작성할 수 없습니다."})
         if len(contents) <= 10 :
             return Response({"error":"contents가 10자 이하라면 게시글을 작성할 수 없습니다."}) 
         
+        recent_article = ArticleModel.objects.latest('id')
+        recent_article.image = image
+        recent_article.title = title
+        recent_article.contents = contents
+        recent_article.save()
+
+
+        # 유화작업 파트, 파일 크기 지정 --end-scale <>
+
+        style_img = ArticleModel.objects.latest('id').image_converted
+        text = f'{style_img}'
+        if text[0] == 'p':
+            output = os.system(f'style_transfer media/image/{image} media/{style_img} -o output_{image} --end-scale 50')
+        else:
+            output = os.system(f'style_transfer media/image/{image} {style_img} -o output_{image} --end-scale 50')
         
+        output = f'output_{image}'
+        shutil.move(f'{output}', f'media/output/{output}')
 
-        article = ArticleModel(
-            author = user,
-            title = title,
-            contents = contents,
-            image = image,
-            
-            # exposure_start_date = exposure_start_date,
-            # exposure_end_date = exposure_end_date
-        )
+        empty_output = ArticleModel.objects.latest('id')
+        empty_output.output = f'../output_{image}'
+        empty_output.save()
 
-        article.save()
-
-        # style transfer 부분
-        # 실험파일
-        # output = request.FILES
-        # output.save()
-
-        # 머신러닝 파트
-        # output = os.system(f'style_transfer article/media/{image} article/media/boo.png -o output_{image}')
-
-        ##empty_output = ArticleModel.objects.latest('id')
-
-        # 아웃풋 삽입
-        ##empty_output.output = output
-
-        ##empty_output.save()
-        
         return Response({"message":"작성 완료!"})
 
     # 게시물 업데이트
@@ -140,10 +134,17 @@ class AllArticleView(APIView):
 
     # 적용 필터 가져오기
     def post(self, request):
-        img = request.data
-        # sample = f"article/media/{img}.png"
 
-        return Response(f"{sample}")
+        filter = request.data
+        filter = f'media/paint/{filter}.png'
+        ArticleModel.objects.create(
+            image_converted=filter, 
+            author=request.user, 
+            title='', 
+            contents='아직 작성되지 않았습니다.'
+            )
+        print(filter)
+        return Response(filter)
 
 
 # url = 'article/<obj_id>/ article detail 페이지
@@ -248,96 +249,36 @@ class CommentUserView(APIView):
 
 class ImageView(APIView):
     
+
+
+    # 그림판 필터 가져와서 저장하기 
     def post(self,request):
+        print(request.user)
+        
+        data = request.data
+        data = data['image']
+        
+        
+        ArticleModel.objects.create(
+            image_converted=data, 
+            author=request.user, 
+            title='', 
+            contents='아직 작성되지 않았습니다.'
+            )
+        print(data)
+        return Response("")
+
+class UserImageView(APIView):
+
+    # 드래그앤 드롭 파일(적용파일)가져와서 저장하기 
+    def post(self,request):
+        data = request.data
+        data1 = request.FILES
+        print(data1.values())
+        print(dir(data1))
+        recent_article = ArticleModel.objects.latest('id')
+
+        recent_article.image = data
+        recent_article.save()
 
         return Response("")
-    
-
-
-    # def post(self, request):
-        
-    #     empty = ArticleModel.objects.latest('id')
-    #     image = request.data
-    #     print(dir(image))
-    #     image = image.values()
-    #     image = json.load(image)
-    #     image = Image.open(image)
-    #     image.thumbnail((220, 130), Image.ANTIALIAS)
-    #     thumb_io = io.BytesIO()
-    #     image.save(thumb_io, image.format, quality=60)
-    #     empty.image.save(image.filename, ContentFile(thumb_io.getvalue()), save=False)
-    #     empty.save()
-
-
-            # image = request.data
-            # print(image)
-            # print(list(image.values()))
-            # empty = ArticleModel.objects.latest('id')
-            # empty.image_converted = image
-            # empty.save()
-
-
-
-
-
-
-
-
-
-        # style transfer 부분
-        # 실험파일
-        # output = request.FILES
-        # output.save()
-
-        # 머신러닝 파트
-        # output = os.system(f'style_transfer article/media/{image} article/media/boo.png -o output_{image}')
-
-        ##empty_output = ArticleModel.objects.latest('id')
-
-        # 아웃풋 삽입
-        ##empty_output.output = output
-
-        ##empty_output.save()
-
-
-
-
-
-
-        # print(image)
-        # serializer = ArticlePostSerializer(data=request.data)
-
-        # if serializer.is_valid():
-        #    serializer.save() 
-        #    return Response({"message": "글 작성 완료!!"}) 
-        # else: 
-        #     print(serializer.errors)
-        #     return Response({"message": f'${serializer.errors}'}, 400)
-
-        
-
-
-
-
-
-
-
-
-
-
-
-# class ArticleDetailView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         today = timezone.now()
-
-#         articles_comment = CommentModel.objects.comment(
-#                 exposure_start_date__lte = today
-#             ).order_by("-id")
-
-#         comments = []
-
-#         for comment in articles_comment:
-#             comments.append(comment.comment)
-#             return Response ({"comment_list": comments}) 
