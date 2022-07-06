@@ -60,14 +60,27 @@
 4. 유화결과확인
 5. 한글/영문 번역 가능 
 
+**allarticle.html**
+
+1. 로그아웃기능
+2. 모든 유저의 게시글확인
+
+**mypage.html**
+
+1. 로그아웃기능
+2. 나의 게시물확인
+
 **detail.html**
 
 1. 로그아웃기능
-2. 일자별 유화결과확인
+2. 댓글포스팅, 삭제
+3. 게시글 포스팅, 삭제 
+
+
 
 ### 👀 기능구현동영상
 
-[![IMAGE ALT TEXT HERE](https://iboxcomein.com/wp-content/uploads/2021/08/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EB%A1%9C%EA%B3%A0.png)](https://www.youtube.com/watch?v=SqhBUMCGEAU)
+[![IMAGE ALT TEXT HERE](https://iboxcomein.com/wp-content/uploads/2021/08/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EB%A1%9C%EA%B3%A0.png)](https://www.youtube.com/watch?v=1MRtEahLy1I)
 
 
 ![Footer](https://capsule-render.vercel.app/api?type=waving&color=9370DB&height=200&section=footer)
